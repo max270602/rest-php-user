@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST API Client</title>
+    <script>
+        async function apiRequest(method, endpoint, data = null) {
+            const response = await fetch(endpoint, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data ? JSON.stringify(data) : null
+            });
+            return response.json();
+        }
+
+        async function createUser() {
+            const username = document.getElementById('create-username').value;
+            const email = document.getElementById('create-email').value;
+            const password = document.getElementById('create-password').value;
+            const result = await apiRequest('POST', 'api.php', { username, email, password });
+            showMessage(result);
+        }
+
+        async function updateUser() {
+            const id = document.getElementById('update-id').value;
+            const username = document.getElementById('update-username').value;
+            const email = document.getElementById('update-email').value;
+            const password = document.getElementById('update-password').value;
+            const result = await apiRequest('PUT', 'api.php', { id, username, email, password });
+            showMessage(result);
+        }
+
+        async function deleteUser() {
+            const id = document.getElementById('delete-id').value;
+            const result = await apiRequest('DELETE', 'api.php', { id });
+            showMessage(result);
+        }
+
+        async function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const result = await apiRequest('POST', 'api.php', { action: 'login', email, password });
+            showMessage(result);
+        }
+
+        async function getUser() {
+            const id = document.getElementById('get-id').value;
+            const result = await apiRequest('GET', 'api.php?id=' + id);
+            showMessage(result);
+        }
+
+        function showMessage(result) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerText = JSON.stringify(result, null, 2);
+        }
+    </script>
+</head>
+<body>
+    <h1>REST API на PHP для работы с данными пользователя</h1>
+
+    <h2>Создать пользователя</h2>
+    <input type="text" id="create-username" placeholder="Имя пользователя">
+    <input type="text" id="create-email" placeholder="Email">
+    <input type="password" id="create-password" placeholder="Пароль">
+    <button onclick="createUser()">Создать</button>
+
+    <h2>Обновить данные пользователя</h2>
+    <input type="text" id="update-id" placeholder="ID">
+    <input type="text" id="update-username" placeholder="Имя пользователя">
+    <input type="text" id="update-email" placeholder="Email">
+    <input type="password" id="update-password" placeholder="Пароль">
+    <button onclick="updateUser()">Обновить данные</button>
+
+    <h2>Удалить пользователя</h2>
+    <input type="text" id="delete-id" placeholder="ID">
+    <button onclick="deleteUser()">Удалить</button>
+
+    <h2>Авторизация пользователя</h2>
+    <input type="text" id="login-email" placeholder="Email">
+    <input type="password" id="login-password" placeholder="Пароль">
+    <button onclick="loginUser()">Авторизация</button>
+
+    <h2>Получить информацию о пользователю по ID</h2>
+    <input type="text" id="get-id" placeholder="ID">
+    <button onclick="getUser()">Получить информацию</button>
+
+    <h2>Информативное сообщение:</h2>
+    <pre id="message"></pre>
+</body>
+</html>
